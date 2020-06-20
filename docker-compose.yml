@@ -1,0 +1,34 @@
+version: '2'
+services:
+  mysql:
+    build:
+      context: ./compose/mysql
+      args:
+        - MYSQL_DATABASE=${MYSQL_DATABASE}
+        - MYSQL_USER=${MYSQL_USER}
+        - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+        - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+  redis:
+    image: redis:latest
+    ports:
+      - 6379:6379
+    command: ['redis-server', '--appendonly', 'yes']
+    volumes:
+      - .:/redis-data
+  sails:
+    build:
+      context: .
+      dockerfile: ./compose/sails/Dockerfile
+    command: /start-dev.sh
+    depends_on:
+      - mysql
+      - redis
+    environment:
+      - POSTGRES_USER=test_project
+      - USE_DOCKER=yes
+    volumes:
+      - .:/app
+    ports:
+      - '8000:8000'
+    links:
+      - mysql
