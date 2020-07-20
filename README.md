@@ -1,4 +1,4 @@
-# reveo-app
+# sails-app
 
 a [Sails v1](https://sailsjs.com) application
 
